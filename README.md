@@ -11,6 +11,7 @@ Then:
 
 ```
 cp settings.js.example settings.js
+chmod 600 settings.js
 ```
 
 Now put your API key in the settings.js file.
@@ -39,7 +40,7 @@ If the last BART has already left, the program will tell you and show time left 
 ```
 ./lastbart.js mac to sf
 The last BART has already sailed!
-Next BART for MacArthur station departs in 1 and 1 minutes [at 4:31 am]
+Next BART from MacArthur station toward sf departs in 0 hours and 7 minutes [at 4:31 am]
 ```
 
 # Cronjob

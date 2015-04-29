@@ -166,9 +166,9 @@ function get_last_bart(station, direct, only_last, callback) {
     });          
 }
 
-function printnext(station, m) {
+function printnext(station, direct, m) {
     var now = moment();
-    console.log("Next BART for " + station + " station departs in " + Math.abs(now.diff(m, 'hours')) + " hours and " + Math.abs(now.diff(m, 'minutes')) % 60  + " minutes [at " + m.format("h:mm a") + "]");
+    console.log("Next BART from " + station + " station toward " + direct + " departs in " + Math.abs(now.diff(m, 'hours')) + " hours and " + Math.abs(now.diff(m, 'minutes')) % 60  + " minutes [at " + m.format("h:mm a") + "]");
 }
 
 function printnext_seconds(m) {
@@ -197,13 +197,13 @@ if(argv.l) {
                     printnext_seconds(next);
                 } else {
                     console.log("The last BART has already sailed!");
-                    printnext(station.name, next);
+                    printnext(station.name, direction, next);
                 }
             } else {
                 if(argv.n) {
                     printnext_seconds(last);
                 } else {
-                    printnext(station.name, last);
+                    printnext(station.name, direction, last);
                 }
             }
         });
