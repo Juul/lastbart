@@ -153,25 +153,35 @@ function get_last_bart(station, direct, only_last, callback) {
             return callback("Could not find any scheduled BART trains matching the specified criteria");
         }
 
-        // If current time is later than last BART then we must have gotten the schedule for the upcoming "bart day"
+        // If current time is later than last BART
+        // then that means that the last BART time we got is actually for tomorrow (after midnight)
         if(moment().unix() > last.unix()) {
             if(!only_last) {
-                return callback(null, null, first);
+                // If the current time is after the first BART
+                // then BART is currently running
+                if(moment().unix() < first.unix()) {
+                    return callback(null, null, null);
+                } else {
+                    return callback(null, null, first);
+                }
             }
-            last.add(1, 'day');
-        }
+            last.add(1, 'days');
+            return callback(null, last);
+        } 
 
         callback(null, last);
-
     });          
 }
 
-function printnext(station, direct, m) {
+function printlast(station, direct, m, isnext) {
     var now = moment();
-    console.log("Next BART from " + station + " station toward " + direct + " departs in " + Math.abs(now.diff(m, 'hours')) + " hours and " + Math.abs(now.diff(m, 'minutes')) % 60  + " minutes [at " + m.format("h:mm a") + "]");
+    console.log(now._d);
+    console.log(m._d);
+    var last_or_next = (isnext) ? "Next" : "Last";
+    console.log(last_or_next + " BART from " + station + " station toward " + direct + " departs in " + now.diff(m) / 1000 / 60 / 60 + " hours and " + m.diff(now) % 60  + " minutes [at " + m.format("h:mm a") + "]");
 }
 
-function printnext_seconds(m) {
+function printlast_seconds(m) {
     console.log(Math.abs(moment().diff(m, 'seconds')));
 }
 
@@ -186,24 +196,24 @@ if(argv.l) {
             console.error("Error: " + err);
             process.exit(1);
         }
-        get_last_bart(station.abbr, direction, argv.n, function(err, last, next) {
+        get_last_bart(station.abbr, direction, argv.n, function(err, last, first) {
             if(err) {
                 console.error("Error: " + err);
                 process.exit(1);
             }
             
             if(!last) {
-                if(argv.n) {
-                    printnext_seconds(next);
-                } else {
+                if(!first) {
                     console.log("The last BART has already sailed!");
-                    printnext(station.name, direction, next);
+                    printlast(station.name, direction, first, true);
+                } else {
+                    console.log("BART is currently running");
                 }
             } else {
                 if(argv.n) {
-                    printnext_seconds(last);
+                    printlast_seconds(last);
                 } else {
-                    printnext(station.name, direction, last);
+                    printlast(station.name, direction, last);
                 }
             }
         });

@@ -5,7 +5,21 @@ This is a command line utility to show when the last bart is leaving from a spec
 
 # Setup
 
-First, get yourself a BART API key here: http://api.bart.gov/api/register.aspx
+First, ensure that your system clock is set correctly and is using the same time-zone as BART. 
+
+```
+sudo dpkg-reconfigure tzdata
+```
+
+You might want to install and set up ntpd as well to ensure you system clock stays accurate:
+
+```
+sudo apt-get install ntpdate ntp
+sudo ntpdate -s ntp.ubuntu.com
+sudo service ntp reload
+```
+
+Now, get yourself a BART API key here: http://api.bart.gov/api/register.aspx
 
 Then:
 
