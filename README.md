@@ -32,7 +32,7 @@ Next BART for MacArthur station departs in 1 and 1 minutes [at 4:31 am]
 
 # Cronjob
 
-There is an example cronjob included which, if run every five minutes, would use text to speech to announce how long until the last BART leaves but only while the last BART departure is between 30 and 10 minutes away.
+There is an example cronjob included which, if run every ten minutes, would use text to speech to announce how long until the last BART leaves but only while the last BART departure is between 30 and 10 minutes away.
 
 The cronjob relies on espeak and bc.
 
