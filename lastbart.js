@@ -157,11 +157,9 @@ function get_last_bart(station, direct, only_last, callback) {
         // then that means that the last BART time we got is actually for tomorrow (after midnight)
         if(moment().unix() > last.unix()) {
             if(!only_last) {
-                // If the current time is after the first BART
-                // then BART is currently running
+                // If the current time is before the first BART
+                // then give the time for the next BART
                 if(moment().unix() < first.unix()) {
-                    return callback(null, null, null);
-                } else {
                     return callback(null, null, first);
                 }
             }
@@ -175,10 +173,8 @@ function get_last_bart(station, direct, only_last, callback) {
 
 function printlast(station, direct, m, isnext) {
     var now = moment();
-    console.log(now._d);
-    console.log(m._d);
     var last_or_next = (isnext) ? "Next" : "Last";
-    console.log(last_or_next + " BART from " + station + " station toward " + direct + " departs in " + now.diff(m) / 1000 / 60 / 60 + " hours and " + m.diff(now) % 60  + " minutes [at " + m.format("h:mm a") + "]");
+    console.log(last_or_next + " BART from " + station + " station toward " + direct + " departs in " + Math.abs(now.diff(m, 'hours')) + " hours and " + Math.abs(now.diff(m, 'minutes') % 60)  + " minutes [at " + m.format("h:mm a") + "]");
 }
 
 function printlast_seconds(m) {
@@ -203,12 +199,8 @@ if(argv.l) {
             }
             
             if(!last) {
-                if(!first) {
-                    console.log("The last BART has already sailed!");
-                    printlast(station.name, direction, first, true);
-                } else {
-                    console.log("BART is currently running");
-                }
+                console.log("The last BART has already sailed!");
+                printlast(station.name, direction, first, true);
             } else {
                 if(argv.n) {
                     printlast_seconds(last);
