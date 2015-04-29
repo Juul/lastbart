@@ -9,7 +9,7 @@ This is a command line utility to show when the last bart is leaving from a spec
 ./lastbart.js from_station_name to direction
 
   -l: List all stations
-  -n: Only output seconds until next BART
+  -n: Only output seconds until last BART (never next BART)
   -h / --help: Show usage information.
 
 Station name and direction can be the complete or partial.
@@ -20,6 +20,8 @@ Direction must be one of:
   pittsburg
 ```
 
+If the last BART has already left, the program will tell you and show time left until next BART, unless -n has been specified in which case it will always report time left until the last BART of the day.
+
 ## Example
 
 ```
@@ -27,6 +29,12 @@ Direction must be one of:
 The last BART has already sailed!
 Next BART for MacArthur station departs in 1 and 1 minutes [at 4:31 am]
 ```
+
+# Cronjob
+
+There is an example cronjob included which, if run every five minutes, would use text to speech to announce how long until the last BART leaves but only while the last BART departure is between 30 and 10 minutes away.
+
+The cronjob relies on espeak and bc.
 
 # ToDo
 

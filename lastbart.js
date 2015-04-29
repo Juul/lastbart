@@ -20,7 +20,7 @@ function usage() {
     console.log("Usage: ./lastbart.js from_station_name to direction");
     console.log("");
     console.log("  -l: List all stations");
-    console.log("  -n: Only output seconds until next BART");
+    console.log("  -n: Only output seconds until last BART (never next BART)");
     console.log("  -h / --help: Show usage information.");
     console.log("");
     console.log("Station name and direction can be the complete or partial.")
@@ -141,10 +141,11 @@ function find_last_toward(items, direct) {
     return find_first_toward(items.reverse(), direct);
 }
 
-function get_last_bart(station, direct, callback) {
+// if only_last is set then always report last bart _only_
+function get_last_bart(station, direct, only_last, callback) {
 
     get_schedule(station, "now", function(err, xml, body) {
-        
+
         var items = xml.find('//item');
         var first = find_first_toward(items, direct);
         var last = find_last_toward(items, direct);
@@ -154,7 +155,10 @@ function get_last_bart(station, direct, callback) {
 
         // If current time is later than last BART then we must have gotten the schedule for the upcoming "bart day"
         if(moment().unix() > last.unix()) {
-            return callback(null, null, first);
+            if(!only_last) {
+                return callback(null, null, first);
+            }
+            last.add(1, 'day');
         }
 
         callback(null, last);
@@ -164,7 +168,7 @@ function get_last_bart(station, direct, callback) {
 
 function printnext(station, m) {
     var now = moment();
-    console.log("Next BART for " + station + " station departs in " + Math.abs(now.diff(m, 'hours')) + " and " + Math.abs(now.diff(m, 'minutes')) % 60  + " minutes [at " + m.format("h:mm a") + "]");
+    console.log("Next BART for " + station + " station departs in " + Math.abs(now.diff(m, 'hours')) + " hours and " + Math.abs(now.diff(m, 'minutes')) % 60  + " minutes [at " + m.format("h:mm a") + "]");
 }
 
 function printnext_seconds(m) {
@@ -182,7 +186,7 @@ if(argv.l) {
             console.error("Error: " + err);
             process.exit(1);
         }
-        get_last_bart(station.abbr, direction, function(err, last, next) {
+        get_last_bart(station.abbr, direction, argv.n, function(err, last, next) {
             if(err) {
                 console.error("Error: " + err);
                 process.exit(1);
