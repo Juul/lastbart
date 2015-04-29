@@ -1,7 +1,7 @@
 #!/usr/bin/env nodejs
 
 
-var argv = require('minimist')(process.argv.slice(2));
+var argv = require('minimist')(process.argv.slice(2), {boolean: ['l', 'n']});
 
 var BART = require('./bart.js');
 var settings = require('./settings.js');
@@ -20,6 +20,7 @@ function usage() {
     console.log("Usage: ./lastbart.js from_station_name to direction");
     console.log("");
     console.log("  -l: List all stations");
+    console.log("  -n: Only output seconds until next BART");
     console.log("  -h / --help: Show usage information.");
     console.log("");
     console.log("Station name and direction can be the complete or partial.")
@@ -166,6 +167,10 @@ function printnext(station, m) {
     console.log("Next BART for " + station + " station departs in " + Math.abs(now.diff(m, 'hours')) + " and " + Math.abs(now.diff(m, 'minutes')) % 60  + " minutes [at " + m.format("h:mm a") + "]");
 }
 
+function printnext_seconds(m) {
+    console.log(Math.abs(moment().diff(m, 'seconds')));
+}
+
 if(argv.l) {
     list_stations();
 } else if((argv._.length == 3) && argv._[1].match(/to/i)) {
@@ -184,10 +189,18 @@ if(argv.l) {
             }
             
             if(!last) {
-                console.log("The last BART has already sailed!");
-                printnext(station.name, next);
+                if(argv.n) {
+                    printnext_seconds(next);
+                } else {
+                    console.log("The last BART has already sailed!");
+                    printnext(station.name, next);
+                }
             } else {
-                printnext(station.name, last);
+                if(argv.n) {
+                    printnext_seconds(last);
+                } else {
+                    printnext(station.name, last);
+                }
             }
         });
     });

@@ -9,6 +9,7 @@ This is a command line utility to show when the last bart is leaving from a spec
 ./lastbart.js from_station_name to direction
 
   -l: List all stations
+  -n: Only output seconds until next BART
   -h / --help: Show usage information.
 
 Station name and direction can be the complete or partial.
