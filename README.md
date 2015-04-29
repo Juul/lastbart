@@ -3,6 +3,18 @@ WARNING: Untested. Use at your own risk.
 
 This is a command line utility to show when the last bart is leaving from a specific station.
 
+# Setup
+
+First, get yourself a BART API key here: http://api.bart.gov/api/register.aspx
+
+Then:
+
+```
+cp settings.js.example settings.js
+```
+
+Now put your API key in the settings.js file.
+
 # Usage
 
 ```
